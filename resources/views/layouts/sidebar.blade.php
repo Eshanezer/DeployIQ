@@ -25,6 +25,13 @@
                         'icon' => 'fa-solid fa-sticky-note',
                         'route' => route('admin.logs.index'),
                         'name' => 'Logs',
+                        'sub-routes' => [route('admin.logs.more-info', Session::get('filename', 'default') )]
+                    ],
+                    [
+                        'icon' => 'fa-solid fa-clock',
+                        'route' => route('admin.histories.index'),
+                        'name' => 'History',
+                        'sub-routes' => [route('admin.histories.results', Session::get('id', 'default') )]
                     ],
                     [
                         'icon' => 'fa-solid fa-user',
@@ -41,12 +48,16 @@
             @foreach ($sidebar as $route)
                 @if (doPermitted('//' . explode('/', $route['route'])[3]))
                     <li class="nav-item">
-                        <a class="nav-link {{ $url == $route['route'] ? 'active' : '' }}" href="{{ $route['route'] }}">
+                        @php
+                            $subValidation = (isset($route['sub-routes']) && in_array($url, $route['sub-routes']));
+                        @endphp
+
+                        <a class="nav-link {{ $url == $route['route'] || $subValidation ? 'active' : '' }}" href="{{ $route['route'] }}">
                             <div
                                 class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                                <i class="{{ $route['icon'] }} {{ $url == $route['route'] ? '' : 'text-dark' }}"></i>
+                                <i class="{{ $route['icon'] }} {{ $url == $route['route'] || $subValidation ? '' : 'text-dark' }}"></i>
                             </div>
-                            <span class="nav-link-text ms-1 {{ $url == $route['route'] ? '' : 'text-white' }}">{{ $route['name'] }}</span>
+                            <span class="nav-link-text ms-1 {{ $url == $route['route'] || $subValidation ? '' : 'text-white' }}">{{ $route['name'] }}</span>
                         </a>
                     </li>
                 @endif

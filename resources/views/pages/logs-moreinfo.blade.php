@@ -58,7 +58,7 @@
                         <div class="card">
                             <div class="card-body">
                                 <h6 class="mb-4">{{ $chart['name'] }}</h6>
-                                <div class="p-5">
+                                <div class="p-1">
                                     <canvas id="chart{{ $chart['id'] }}"></canvas>
                                 </div>
                             </div>
@@ -73,6 +73,27 @@
 
 @section('scripts')
     <script>
+        var options = {
+            tooltips: {
+                enabled: false
+            },
+            responsive: true,
+            plugins: {
+                datalabels: {
+                    formatter: (value, ctx) => {
+                        let sum = 0;
+                        let dataArr = ctx.chart.data.datasets[0].data;
+                        dataArr.map(data => {
+                            sum += data;
+                        });
+                        let percentage = (value * 100 / sum).toFixed(2) + "%";
+                        return percentage;
+                    },
+                    color: '#fff',
+                }
+            }
+        };
+
         @foreach ($charts as $chart)
             const ctx{{ $chart['id'] }} = document.getElementById('chart{{ $chart['id'] }}').getContext('2d');
 
@@ -88,18 +109,7 @@
                         borderWidth: 2
                     }]
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position: 'top',
-                        },
-                        title: {
-                            display: false,
-                        }
-                    }
-                }
+                options: options,
             });
         @endforeach
     </script>

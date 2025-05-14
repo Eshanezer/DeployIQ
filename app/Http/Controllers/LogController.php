@@ -7,6 +7,7 @@ use App\Models\Logs;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use League\Csv\Reader;
@@ -73,10 +74,10 @@ class LogController extends Controller
 
                 $absolutePath = Storage::disk('error_logs')->url('csv/' . $fileName);
 
-                // $file->update([
-                //     'status' => 'predicted',
-                //     'predicted_path' => $absolutePath
-                // ]);
+                $file->update([
+                    'status' => 'predicted',
+                    'predicted_path' => $absolutePath
+                ]);
 
                 $csv = Reader::createFromPath(storage_path('logs/csv/' . $fileName), 'r');
                 $csv->setHeaderOffset(0);
@@ -119,6 +120,8 @@ class LogController extends Controller
     public function moreinfo($fileName)
     {
         $file = Logs::where('name', $fileName)->where('status', 'predicted')->firstOrFail();
+
+        Session::put('filename', $fileName);
 
         $columns = [
             'error_level' => [
@@ -171,6 +174,8 @@ class LogController extends Controller
                 $values[] = $file->errorLogs->where($key, $value1)->count();
             }
 
+            $values = $this->optimizeForPrecentage($values);
+
             $data = [
                 'id' => $key,
                 'name' => $value['name'],
@@ -189,5 +194,16 @@ class LogController extends Controller
 
 
         return view('pages.logs-moreinfo', compact(['file', 'charts']));
+    }
+
+    protected function optimizeForPrecentage($values){
+
+        $total = array_sum($values);
+
+        foreach ($values as $key => $value) {
+            $values[$key] = ($value / $total) * 100;
+        }
+
+        return $values;
     }
 }

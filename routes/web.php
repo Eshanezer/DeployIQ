@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogController;
 use App\Http\Controllers\UserController;
@@ -40,6 +41,11 @@ Route::middleware('auth')->group(function () {
             'index' => true,
             'predict' => true,
             'more-info' => true
+        ],
+        'histories' => [
+            'class' => HistoryController::class,
+            'index' => true,
+            'results' => true
         ]
     ];
 
@@ -56,6 +62,10 @@ Route::middleware('auth')->group(function () {
 
             if (isset($values['more-info']) &&  $values['more-info']) {
                 Route::get('/more-info/{filename}', [$values['class'], 'moreinfo'])->name('more-info');
+            }
+
+            if (isset($values['results']) &&  $values['results']) {
+                Route::get('/results/{id}', [$values['class'], 'results'])->name('results');
             }
 
             if (isset($values['enroll']) &&  $values['enroll']) {
