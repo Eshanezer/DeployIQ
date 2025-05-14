@@ -128,7 +128,7 @@
 
                 conversation.push({
                     role: 'user',
-                    content: userMessage
+                    content: "give me a recommonded suggetion for this error. " + userMessage
                 });
 
                 $.ajax({
