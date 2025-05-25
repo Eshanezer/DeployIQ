@@ -18,7 +18,7 @@ class LogController extends Controller
     {
         $logsData = Logs::get();
         $data = array_filter(Storage::disk('error_logs')->files(), function ($item) {
-            return strpos($item, '.log');
+            return strpos($item, '.txt');
         });
         krsort($data);
         return view('pages.logs', compact(['data', 'logsData']));

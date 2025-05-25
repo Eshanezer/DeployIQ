@@ -33,7 +33,7 @@ class HomeController extends Controller
     public function index(Request $request)
     {
         $file = Logs::where('status', 'predicted')->latest()->first();
-        
+
         $charts = [];
 
         if ($file) {
@@ -108,7 +108,7 @@ class HomeController extends Controller
 
         $logsData = Logs::get();
         $data = array_filter(Storage::disk('error_logs')->files(), function ($item) {
-            return strpos($item, '.log');
+            return strpos($item, '.txt');
         });
         krsort($data);
 
